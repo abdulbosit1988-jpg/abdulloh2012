@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Forever Fitness - Premium Equipment</title>
+  <link rel="icon" href="https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0019/4747/brand.gif?itok=1VEj3y-b">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0a0a15, #1a1a2e);
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+    header {
+      background: rgba(0,0,0,0.85);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #444;
+    }
+    .top-bar {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .logo h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: #ffd700;
+      letter-spacing: 2px;
+    }
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+    }
+    nav ul li a {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+    nav ul li a:hover {
+      color: #ffd700;
+    }
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+    .search-bar {
+      position: relative;
+    }
+    .search-bar input {
+      padding: 12px 40px 12px 20px;
+      border: 1px solid #555;
+      border-radius: 50px;
+      background: #1e1e2f;
+      color: #fff;
+      width: 220px;
+      outline: none;
+      transition: width 0.4s, border-color 0.4s;
+    }
+    .search-bar input:focus { width: 300px; border-color: #ffd700; }
+    .search-bar i {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ffd700;
+      font-size: 1.2rem;
+    }
+    .cart-wrapper {
+      position: relative;
+      cursor: pointer;
+    }
+    .cart-icon {
+      font-size: 1.8rem;
+      color: #ffd700;
+      transition: transform 0.3s;
+    }
+    .cart-icon:hover { transform: scale(1.15); }
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: #ff4444;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: bold;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #000;
+    }
+
+    /* ────────────── Модалка корзины ────────────── */
+    #cartModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-content {
+      background: #1e1e2f;
+      border: 1px solid #444;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 { color: #ffd700; font-size: 1.6rem; }
+    .close-btn {
+      background: none;
+      border: none;
+      color: #ffd700;
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+    .cart-items {
+      padding: 15px 20px;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #333;
+      gap: 12px;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-info { flex: 1; }
+    .item-name { font-weight: 600; color: #e0e0e0; }
+    .item-price { color: #00ff99; font-size: 0.95rem; }
+    .item-total { color: #ffd700; font-weight: 600; min-width: 90px; text-align: right; }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2a2a3f;
+      border-radius: 8px;
+      padding: 4px 8px;
+    }
+    .qty-btn {
+      background: none;
+      border: none;
+      color: #ffd700;
+      font-size: 1.3rem;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .qty-btn:hover { color: #fff; background: rgba(255,215,0,0.15); border-radius: 6px; }
+    .qty-display {
+      min-width: 30px;
+      text-align: center;
+      font-weight: 600;
+      color: #ffd700;
+    }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #ff4444;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    .total-section {
+      padding: 20px;
+      border-top: 1px solid #444;
+      background: #181824;
+    }
+    .total-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2rem;
+      margin: 8px 0;
+    }
+    .grand-total {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffd700;
+    }
+    .order-btn {
+      width: 100%;
+      margin-top: 15px;
+      padding: 16px;
+      background: #0088cc;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .order-btn:hover { background: #006b9e; transform: translateY(-2px); }
+    .empty-cart { text-align: center; padding: 40px 20px; color: #888; font-size: 1.1rem; }
+
+    /* ────────────── Карусель ────────────── */
+    .carousel-container {
+      position: relative;
+      max-width: 1300px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .carousel {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+    .carousel .card {
+      min-width: 33.33%; /* 3 карточки в ряд на десктопе */
+      padding: 10px;
+    }
+    @media (max-width: 1024px) {
+      .carousel .card {
+        min-width: 50%; /* 2 в ряд на планшете */
+      }
+    }
+    @media (max-width: 768px) {
+      .carousel .card {
+        min-width: 100%; /* 1 в ряд на мобильном */
+      }
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #ffd700;
+      border: none;
+      font-size: 2rem;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.3s;
+    }
+    .carousel-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
+    .prev-btn { left: 10px; }
+    .next-btn { right: 10px; }
+
+    /* остальной стиль (hero, cards и т.д.) */
+    .hero { background: rgba(0,0,0,0.7); padding: 80px 20px; text-align: center; border-bottom: 1px solid #444; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 5rem; color: #ffd700; margin-bottom: 15px; }
+    .hero p { font-size: 1.5rem; max-width: 900px; margin: 0 auto; opacity: 0.9; }
+    .container { max-width: 1300px; margin: 60px auto; padding: 0 20px; }
+    .intro { text-align: center; margin-bottom: 70px; }
+    .intro h2 { font-size: 3.2rem; color: #ffd700; margin-bottom: 20px; }
+    .card {
+      background: #1e1e2f;
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      text-align: center;
+      border: 1px solid #444;
+    }
+    .card.hidden { display: none; }
+    .card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 25px 60px rgba(255,215,0,0.15) !important;
+    }
+    .card img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-bottom: 4px solid #ffd700;
+    }
+    .card-content { padding: 25px; }
+    .card h3 { font-size: 1.7rem; margin-bottom: 15px; color: #ffd700; }
+    .price { font-size: 2rem; font-weight: bold; color: #00ff99; margin: 15px 0; }
+    .btn {
+      background: #ffd700;
+      color: #000;
+      padding: 14px 35px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn:hover { background: #ffea00; transform: scale(1.08); }
+    footer {
+      text-align: center;
+      padding: 50px 20px;
+      background: #000;
+      margin-top: 100px;
+      border-top: 1px solid #333;
+    }
+    @media (max-width: 768px) {
+      .top-bar { flex-direction: column; }
+      nav ul { flex-direction: column; gap: 15px; }
+      .search-bar input { width: 100%; }
+      .search-bar input:focus { width: 100%; }
+      .hero h1 { font-size: 3.5rem; }
+      .modal-content { max-width: 95%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="top-bar">
+      <div class="logo">
+        <h1>Forever Fitness</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contacts">Contacts</a></li>
+        </ul>
+      </nav>
+      <div class="nav-icons">
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Поиск оборудования..." oninput="searchEquipment()">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="cart-wrapper" onclick="openCart()">
+          <i class="fas fa-shopping-cart cart-icon"></i>
+          <span class="cart-count" id="cartCount">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Модальное окно корзины -->
+  <div id="cartModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Ваша корзина</h2>
+        <button class="close-btn" onclick="closeCart()">×</button>
+      </div>
+      <div class="cart-items" id="cartItemsList"></div>
+      <div class="total-section">
+        <div class="total-line">
+          <span>Товаров:</span>
+          <span id="cartItemsQty">0</span>
+        </div>
+        <div class="total-line grand-total">
+          <span>Итого:</span>
+          <span id="cartTotal">$0</span>
+        </div>
+        <button class="order-btn" onclick="sendOrderToTelegram()">Оформить заказ →</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero" id="home">
+    <h1>Forever Fitness</h1>
+    <p>Time to Train – Elevate Your Strength, Sculpt Your Future, Live Forever Powerful</p>
+  </section>
+
+  <div class="container">
+    <div class="intro">
+      <h2>Premium Matrix Fitness Collection</h2>
+      <p>Explore high-performance gym machines built for serious training and timeless results.</p>
+    </div>
+
+    <div class="carousel-container" id="equipmentCarousel">
+      <button class="carousel-btn prev-btn" onclick="prevSlide()">&lt;</button>
+      <div class="carousel" id="carouselTrack">
+        <div class="card" data-name="Functional Trainer Cable Machine" data-price="5200">
+          <img src="https://5.imimg.com/data5/SELLER/Default/2024/5/415061627/UA/VM/MP/133369607/matrix-versa-functional-trainer-machine.jpg" alt="Functional Trainer">
+          <div class="card-content">
+            <h3>Functional Trainer Cable Machine</h3>
+            <div class="price">$4,200 – $6,800</div>
+            <button class="btn" onclick="addToCart('Functional Trainer Cable Machine', 5200)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="Premium Treadmill with Console" data-price="5400">
+          <img src="https://innovativefit.com/wp-content/uploads/2023/09/fd58de_9551cfa7cb9c48339b28107f8b9cc8abmv2.png" alt="Treadmill">
+          <div class="card-content">
+            <h3>Premium Treadmill with Console</h3>
+            <div class="price">$4,500 – $6,200</div>
+            <button class="btn" onclick="addToCart('Premium Treadmill with Console', 5400)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="Selectorized Chest Press" data-price="4200">
+          <img src="https://usedgymstore.com/assets/images/513376774_1141031091392596_6763059948679512363_n.jpg" alt="Chest Press">
+          <div class="card-content">
+            <h3>Selectorized Chest Press</h3>
+            <div class="price">$3,200 – $5,500</div>
+            <button class="btn" onclick="addToCart('Selectorized Chest Press', 4200)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="Recumbent Bike" data-price="3700">
+          <img src="https://www.sefiles.net/merchant/5784/images/zoom/MXR20_R30-04-XIR-02recumbent_hero.jpg" alt="Recumbent Bike">
+          <div class="card-content">
+            <h3>Recumbent Bike</h3>
+            <div class="price">$3,000 – $4,000</div>
+            <button class="btn" onclick="addToCart('Recumbent Bike', 3700)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="Elliptical Trainer" data-price="4500">
+          <img src="https://www.360fitnesssuperstore.com/cdn/shop/files/Matrix_E30_Elliptical_XR_1_900x.jpg?v=1711287796" alt="Elliptical Trainer">
+          <div class="card-content">
+            <h3>Elliptical Trainer</h3>
+            <div class="price">$3,500 – $5,500</div>
+            <button class="btn" onclick="addToCart('Elliptical Trainer', 4500)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="Leg Press Machine" data-price="4000">
+          <img src="https://i.ytimg.com/vi/sI5PJZx73H8/maxresdefault.jpg" alt="Leg Press">
+          <div class="card-content">
+            <h3>Leg Press Machine</h3>
+            <div class="price">$3,000 – $5,000</div>
+            <button class="btn" onclick="addToCart('Leg Press Machine', 4000)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="A50 Ascent Trainer" data-price="5057">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKZkVIeTqRO0zMDH8PK5YqfjBGodG5sA6ylA&s" alt="A50 Ascent Trainer">
+          <div class="card-content">
+            <h3>A50 Ascent Trainer</h3>
+            <div class="price">$4,500 – $5,500</div>
+            <button class="btn" onclick="addToCart('A50 Ascent Trainer', 5057)">В корзину</button>
+          </div>
+        </div>
+
+        <div class="card" data-name="TF30 Folding Treadmill" data-price="3289">
+          <img src="https://www.thefitnesssuperstore.com/wp-content/uploads/2017/08/MXR16_TF50-XIR-treadmill_hero_lores.jpg" alt="TF30 Folding Treadmill">
+          <div class="card-content">
+            <h3>TF30 Folding Treadmill</h3>
+            <div class="price">$3,000 – $3,500</div>
+            <button class="btn" onclick="addToCart('TF30 Folding Treadmill', 3289)">В корзину</button>
+          </div>
+        </div>
+
+      </div>
+      <button class="carousel-btn next-btn" onclick="nextSlide()">&gt;</button>
+    </div>
+  </div>
+
+  <section id="about" class="container" style="margin-top: 100px;">
+    <h2>About Us</h2>
+    <p>Forever Fitness is proud to offer premium Matrix Fitness equipment. Matrix Fitness is a leading brand in commercial and home gym solutions, providing high-quality cardio and strength training machines designed for performance, ergonomics, and durability.</p>
+    <p>Our collection is suitable for both commercial facilities and home use, ensuring lasting results for all users. From treadmills and ellipticals to strength machines, we have everything you need to elevate your training.</p>
+    <p>With a focus on innovation, Matrix Fitness unveils new products like the Magnum Plate-Loaded stations, built for serious athletes. Join us in sculpting your future with timeless power.</p>
+  </section>
+
+  <section id="contacts" class="container" style="margin-top: 100px;">
+    <h2>Contacts</h2>
+    <p>Contact us at: info@foreverfitness.com</p>
+    <p>Phone: +998 90 902 22 62</p>
+    <p>Address: Tashkent, Uzbekistan</p>
+    <p>Follow us on social media:</p>
+    <div style="display: flex; justify-content: center; gap: 20px;">
+      <a href="#"><i class="fab fa-telegram" style="color: #ffd700; font-size: 2rem;"></i></a>
+      <a href="#"><i class="fab fa-instagram" style="color: #ffd700; font-size: 2rem;"></i></a>
+      <a href="#"><i class="fab fa-facebook" style="color: #ffd700; font-size: 2rem;"></i></a>
+    </div>
+  </section>
+
+  <footer>
+    <p>Forever Fitness – Time to Train. Become Unstoppable.</p>
+    <p>© 2026 Forever Fitness. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function updateCartCount() {
+      document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function addToCart(name, price) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ name, price, qty: 1 });
+      }
+      saveCart();
+    }
+
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty < 1) cart[index].qty = 1;
+      saveCart();
+      renderCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      saveCart();
+      renderCart();
+    }
+
+    function renderCart() {
+      const list = document.getElementById('cartItemsList');
+      list.innerHTML = '';
+
+      if (cart.length === 0) {
+        list.innerHTML = '<div class="empty-cart">Корзина пуста</div>';
+        document.getElementById('cartItemsQty').textContent = '0';
+        document.getElementById('cartTotal').textContent = '$0';
+        return;
+      }
+
+      let total = 0;
+
+      cart.forEach((item, i) => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">$${item.price.toLocaleString()} × ${item.qty}</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+            <span class="qty-display">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+          </div>
+          <div class="item-total">$${itemTotal.toLocaleString()}</div>
+          <button class="remove-btn" onclick="removeFromCart(${i})">×</button>
+        `;
+        list.appendChild(div);
+      });
+
+      document.getElementById('cartItemsQty').textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cartTotal').textContent = `$${total.toLocaleString()}`;
+    }
+
+    function openCart() {
+      renderCart();
+      document.getElementById('cartModal').style.display = 'flex';
+    }
+
+    function closeCart() {
+      document.getElementById('cartModal').style.display = 'none';
+    }
+
+    function sendOrderToTelegram() {
+      if (cart.length === 0) {
+        alert('Корзина пуста');
+        return;
+      }
+
+      let text = 'Новый заказ с сайта Forever Fitness\n\n';
+      let total = 0;
+
+      cart.forEach(item => {
+        const sum = item.price * item.qty;
+        text += `• ${item.name} × ${item.qty} = $${sum.toLocaleString()}\n`;
+        total += sum;
+      });
+
+      text += `\nИтого: $${total.toLocaleString()}\n`;
+      text += `\nПожалуйста, свяжитесь со мной!`;
+
+      const encoded = encodeURIComponent(text);
+      window.open(`https://t.me/+998909022262?text=${encoded}`, '_blank');
+    }
+
+    function searchEquipment() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('#carouselTrack .card');
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name')?.toLowerCase() || '';
+        if (name.includes(input)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      // Пересчитываем видимые карточки и сбрасываем позицию карусели
+      resetCarousel();
+    }
+
+    // Карусель скрипт
+    let currentIndex = 0;
+    const track = document.getElementById('carouselTrack');
+    let visibleCards = Array.from(track.children).filter(card => !card.classList.contains('hidden'));
+
+    function updateVisibleCards() {
+      visibleCards = Array.from(track.children).filter(card => !card.classList.contains('hidden'));
+    }
+
+    function moveCarousel() {
+      const cardWidth = track.children[0].offsetWidth;
+      track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+    }
+
+    function prevSlide() {
+      updateVisibleCards();
+      if (currentIndex > 0) {
+        currentIndex--;
+        moveCarousel();
+      }
+    }
+
+    function nextSlide() {
+      updateVisibleCards();
+      if (currentIndex < visibleCards.length - getVisibleCount()) {
+        currentIndex++;
+        moveCarousel();
+      }
+    }
+
+    function getVisibleCount() {
+      const width = window.innerWidth;
+      if (width <= 768) return 1;
+      if (width <= 1024) return 2;
+      return 3;
+    }
+
+    function resetCarousel() {
+      currentIndex = 0;
+      moveCarousel();
+    }
+
+    // Инициализация
+    updateCartCount();
+    document.getElementById('cartModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeCart();
+    });
+    window.addEventListener('resize', resetCarousel);
+    resetCarousel();
+  </script>
+
+</body>
+</html>
